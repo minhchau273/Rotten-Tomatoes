@@ -16,6 +16,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        UINavigationBar.appearance().barTintColor = UIColor(red: 0/255, green: 79/255, blue: 0/255, alpha: 1.0)
+        UINavigationBar.appearance().tintColor = UIColor.whiteColor()
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+        
+        UIApplication.sharedApplication().statusBarStyle = .LightContent
+        
+//        UISearchBar.appearance().searchBarStyle = UISearchBarStyle.Minimal
+        
+        UITabBar.appearance().backgroundImage = UIImage()
+        UITabBar.appearance().backgroundColor = UIColor(red: 0/255, green: 79/255, blue: 0/255, alpha: 1.0)
+        UITabBar.appearance().tintColor = UIColor.whiteColor()
+        
         return true
     }
 
