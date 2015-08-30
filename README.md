@@ -6,6 +6,7 @@ Time spent: 11hrs
 
 Features
 Required
+
 [x] User can view a list of movies. Poster images load asynchronously.
 
 [x] User can view movie details by tapping on a cell.
@@ -35,6 +36,7 @@ Optional
 [x] Switch between list view and grid view
 
 Walkthrough
+
 ![Video Walkthrough](RottenTomatoes.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
