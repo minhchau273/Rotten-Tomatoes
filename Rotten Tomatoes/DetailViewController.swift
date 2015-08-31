@@ -41,26 +41,71 @@ class DetailViewController: UIViewController {
     }
     
     func loadImage() {
+        
+        // Use NSURLCache
+        
+        var sUrl = selectedMovie.valueForKeyPath("posters.thumbnail") as! String
+        let lowResUrl = NSURL(string: sUrl)
+        
+        var range = sUrl.rangeOfString(".*cloudfront.net/", options: .RegularExpressionSearch)
+        if let range = range {
+            sUrl = sUrl.stringByReplacingCharactersInRange(range, withString: "https://content6.flixster.com/")
+        }
+        let url = NSURL(string: sUrl)
+        
+        var urlRequest = NSURLRequest(URL: url!, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 60)
         if hasConnectivity() {
-            var sUrl = selectedMovie.valueForKeyPath("posters.original") as? String
-            let lowResUrl = NSURL(string: sUrl!)
+            
             var placeholderImg = UIImage(data: NSData(contentsOfURL: lowResUrl!)!)
             
-            var range = sUrl!.rangeOfString(".*cloudfront.net/", options: .RegularExpressionSearch)
-            if let range = range {
-                sUrl = sUrl!.stringByReplacingCharactersInRange(range, withString: "https://content6.flixster.com/")
-            }
-            let url = NSURL(string: sUrl!)
-            
-            let urlRequest = NSURLRequest(URL: url!)
             imageView.setImageWithURLRequest(urlRequest, placeholderImage: placeholderImg,
                 success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
-                    self.imageView.setImageWithURL(url!)
+                    if ((request) != nil) {
+                        self.imageView.image = image
+                    }
+                    
                 }, failure: {
                     (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
-                    self.imageView.setImageWithURL(lowResUrl!)
+                    
+            })
+        } else {
+            
+            imageView.setImageWithURLRequest(urlRequest, placeholderImage: nil,
+                success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
+                    self.imageView.image = image
+                }, failure: {
+                    (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
+                    
             })
         }
+        
+
+//        if hasConnectivity() {
+//            var sUrl = selectedMovie.valueForKeyPath("posters.original") as? String
+//            let lowResUrl = NSURL(string: sUrl!)
+//            let start = NSDate()
+//            var placeholderImg = UIImage(data: NSData(contentsOfURL: lowResUrl!)!)
+//            let end = NSDate()
+//            let timeElapsed = end.timeIntervalSinceDate(start)
+//            println("Time elapsed: \(timeElapsed)")
+//            
+//            var range = sUrl!.rangeOfString(".*cloudfront.net/", options: .RegularExpressionSearch)
+//            if let range = range {
+//                sUrl = sUrl!.stringByReplacingCharactersInRange(range, withString: "https://content6.flixster.com/")
+//            }
+//            let url = NSURL(string: sUrl!)
+//            
+//            let urlRequest = NSURLRequest(URL: url!)
+//            imageView.setImageWithURLRequest(urlRequest, placeholderImage: placeholderImg,
+//                success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
+//                    self.imageView.image = image
+//                }, failure: {
+//                    (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
+//                    
+//            })
+//        }
+        
+        
     }
     
     func loadDetail() {

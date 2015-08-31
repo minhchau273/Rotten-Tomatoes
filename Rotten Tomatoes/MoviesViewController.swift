@@ -9,6 +9,8 @@
 import UIKit
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UITabBarDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    let defaults = NSUserDefaults.standardUserDefaults()
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -51,20 +53,15 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         searchBar.delegate = self
         tabBar.delegate = self
         
-        tabBar.selectedItem = tabBar.items?.first as! UITabBarItem
-        
-        
+        tabBar.selectedItem = tabBar.items?.first as? UITabBarItem
         
         loadData()
-        
         
         //Pull to refresh
         pullToRefresh()
         
         
     }
-    
-    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -86,7 +83,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             PKHUD.sharedHUD.contentView = PKHUDProgressView()
             PKHUD.sharedHUD.show()
             
-            
             let request = NSURLRequest(URL: url!)
             NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) { (response: NSURLResponse!, data: NSData!, error:NSError!) -> Void in
                 let json = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as? NSDictionary
@@ -95,6 +91,13 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     self.data = json["movies"] as? [NSDictionary]
                     self.tableView.reloadData()
                     self.collectionView.reloadData()
+                    
+                    // Save to NSUserDefaults
+                    if self.tabBar.selectedItem!.tag == 0 {
+                        self.defaults.setObject(self.data, forKey: "movies")
+                    } else {
+                        self.defaults.setObject(self.data, forKey: "dvds")
+                    }
                 }
                 
                 //            println(json)
@@ -107,8 +110,19 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             UIView.animateWithDuration(1.0, delay: 0.0, options: UIViewAnimationOptions.CurveEaseIn, animations: {
                 self.errorView.alpha = 1.0
                 }, completion: nil)
+            
+            self.data = [NSDictionary]()
+            
+            if self.tabBar.selectedItem!.tag == 0 {
+                self.data = defaults.objectForKey("movies") as? [NSDictionary]
+            } else {
+                self.data = defaults.objectForKey("dvds") as? [NSDictionary]
+            }
+            
+            self.tableView.reloadData()
+            self.collectionView.reloadData()
+            
         }
-        
         
         refreshControl?.endRefreshing()
         refreshControl2?.endRefreshing()
@@ -129,7 +143,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     func hasConnectivity() -> Bool {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
         let networkStatus: Int = reachability.currentReachabilityStatus.hashValue
-        println(networkStatus)
+//        println(networkStatus)
         return networkStatus != 0
     }
     
@@ -223,22 +237,16 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             cell.emojiView.image = UIImage(named: "Neutral")
         }
 
+        let url = NSURL(string: movie.valueForKeyPath("posters.thumbnail") as! String)!
+        var urlRequest = NSURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 60)
+        
         if hasConnectivity() {
-            let lowResUrl = movie.valueForKeyPath("posters.thumbnail") as! String
-            var placeholderImg = UIImage(data: NSData(contentsOfURL: NSURL(string: lowResUrl)!)!)
-            
-            let url = editImgUrl(lowResUrl)
-            let urlRequest = NSURLRequest(URL: url)
-            
-            
-            cell.posterView.alpha = 0.0
-            
-            cell.posterView.setImageWithURLRequest(urlRequest, placeholderImage: placeholderImg,
+            cell.posterView.setImageWithURLRequest(urlRequest, placeholderImage: nil,
                 success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
-                    
+                    cell.posterView.alpha = 0.0
                     if ((request) != nil) {
                         UIView.transitionWithView(cell.posterView, duration: 0.2, options: (UIViewAnimationOptions.CurveLinear | UIViewAnimationOptions.AllowUserInteraction), animations: {
-                            cell.posterView.setImageWithURL(url)
+                            cell.posterView.image = image
                             cell.posterView.alpha = 1.0
                             }, completion: nil)
                     }
@@ -247,10 +255,17 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
                     
             })
-
+            
+        } else {
+            cell.posterView.setImageWithURLRequest(urlRequest, placeholderImage: nil,
+                success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
+                    cell.posterView.image = image
+                    
+                }, failure: {
+                    (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
+                    
+            })
         }
-
-        
         
         return cell
     }
@@ -308,6 +323,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionMovieCell", forIndexPath: indexPath) as! CollectionMovieCell
         
         var movie = NSDictionary()
@@ -357,27 +373,21 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             cell.emojiView.image = UIImage(named: "Neutral")
         }
         
+        let lowResUrl = movie.valueForKeyPath("posters.thumbnail") as! String
+        let url = editImgUrl(lowResUrl)
         
-//        let url = editImgUrl(movie.valueForKeyPath("posters.thumbnail") as! String)
-//        cell.imageView.setImageWithURL(url)
-        
-        
+       
+        var urlRequest = NSURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 60)
         if hasConnectivity() {
-            let lowResUrl = movie.valueForKeyPath("posters.thumbnail") as! String
-            var placeholderImg = UIImage(data: NSData(contentsOfURL: NSURL(string: lowResUrl)!)!)
             
-            let url = editImgUrl(lowResUrl)
-            let urlRequest = NSURLRequest(URL: url)
+//            var placeholderImg = UIImage(data: NSData(contentsOfURL: NSURL(string: lowResUrl)!)!)
             
-            
-            cell.imageView.alpha = 0.0
-            
-            cell.imageView.setImageWithURLRequest(urlRequest, placeholderImage: placeholderImg,
+            cell.imageView.setImageWithURLRequest(urlRequest, placeholderImage: nil,
                 success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
-                    
+                    cell.imageView.alpha = 0.0
                     if ((request) != nil) {
                         UIView.transitionWithView(cell.imageView, duration: 0.2, options: (UIViewAnimationOptions.CurveLinear | UIViewAnimationOptions.AllowUserInteraction), animations: {
-                            cell.imageView.setImageWithURL(url)
+                            cell.imageView.image = image
                             cell.imageView.alpha = 1.0
                             }, completion: nil)
                     }
@@ -386,12 +396,18 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
                     
             })
+        } else {
             
+            cell.imageView.setImageWithURLRequest(urlRequest, placeholderImage: nil,
+                success: { (request:NSURLRequest!,response:NSHTTPURLResponse!, image:UIImage!) -> Void in
+                    cell.imageView.image = image
+
+                }, failure: {
+                    (request:NSURLRequest!,response:NSHTTPURLResponse!, error:NSError!) -> Void in
+                    
+            })
         }
-        
-        
-        
-        
+
         return cell
 
     }
@@ -428,8 +444,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                 let range = tmp["title"]!.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)
                 return range.location != NSNotFound
             })
+            
             self.tableView.reloadData()
             self.collectionView.reloadData()
+
+            
         }
     }
     
