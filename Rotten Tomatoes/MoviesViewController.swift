@@ -238,7 +238,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         let url = NSURL(string: movie.valueForKeyPath("posters.thumbnail") as! String)!
-        var urlRequest = NSURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 60)
+        var urlRequest = NSURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 600)
         
         if hasConnectivity() {
             cell.posterView.setImageWithURLRequest(urlRequest, placeholderImage: nil,
@@ -377,7 +377,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let url = editImgUrl(lowResUrl)
         
        
-        var urlRequest = NSURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 60)
+        var urlRequest = NSURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 600)
         if hasConnectivity() {
             
 //            var placeholderImg = UIImage(data: NSData(contentsOfURL: NSURL(string: lowResUrl)!)!)

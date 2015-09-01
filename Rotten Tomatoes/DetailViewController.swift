@@ -53,7 +53,7 @@ class DetailViewController: UIViewController {
         }
         let url = NSURL(string: sUrl)
         
-        var urlRequest = NSURLRequest(URL: url!, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 60)
+        var urlRequest = NSURLRequest(URL: url!, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad, timeoutInterval: 600)
         if hasConnectivity() {
             
             var placeholderImg = UIImage(data: NSData(contentsOfURL: lowResUrl!)!)
