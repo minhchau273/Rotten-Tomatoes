@@ -155,7 +155,6 @@ class DetailViewController: UIViewController {
     func hasConnectivity() -> Bool {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
         let networkStatus: Int = reachability.currentReachabilityStatus.hashValue
-        println(networkStatus)
         return networkStatus != 0
     }
     

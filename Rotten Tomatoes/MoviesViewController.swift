@@ -43,6 +43,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var currentTab = 0
     
+    var selectedIndexPath: NSIndexPath!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -162,6 +164,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                 self.errorView.alpha = 1.0
                 }, completion: nil)
         }
+        
+        if selectedIndexPath != nil {
+            tableView.cellForRowAtIndexPath(selectedIndexPath)?.contentView.backgroundColor = UIColor(red: 240/255, green: 255/255, blue: 240/255, alpha: 1.0)
+        }
     }
     
     func pullToRefresh() {
@@ -193,6 +199,12 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
         var cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
+        
+        if selectedIndexPath != nil {
+            if indexPath == selectedIndexPath {
+                cell.contentView.backgroundColor = UIColor(red: 240/255, green: 255/255, blue: 240/255, alpha: 1.0)
+            }
+        }
         
         var movie = NSDictionary()
         
@@ -277,9 +289,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
-        selectedCell.contentView.backgroundColor = UIColor(red: 240/255, green: 255/255, blue: 240/255, alpha: 1.0)
-        
+//        var selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+//        selectedCell.contentView.backgroundColor = UIColor(red: 240/255, green: 255/255, blue: 240/255, alpha: 1.0)
+        selectedIndexPath = indexPath
         searchBar.resignFirstResponder()
     }
     
@@ -472,6 +484,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         if item.tag != currentTab {
             currentTab = item.tag
+            
+            selectedIndexPath = nil
             
             searchBar.resignFirstResponder()
             searchBar.text = ""
