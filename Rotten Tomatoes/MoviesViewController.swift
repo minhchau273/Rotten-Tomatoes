@@ -41,6 +41,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var filtered = [NSDictionary]()
     
+    var currentTab = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -277,6 +279,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
         selectedCell.contentView.backgroundColor = UIColor(red: 240/255, green: 255/255, blue: 240/255, alpha: 1.0)
+        
+        searchBar.resignFirstResponder()
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -420,11 +424,22 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         searchBar.enablesReturnKeyAutomatically = false
+        searchBar.showsCancelButton = true
     }
-
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchActive = false
+        self.tableView.reloadData()
+        self.collectionView.reloadData()
+        searchBar.resignFirstResponder()
+    }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        //searchActive = false;
         searchBar.resignFirstResponder()
     }
     
@@ -447,21 +462,23 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             
             self.tableView.reloadData()
             self.collectionView.reloadData()
-
-            
         }
     }
     
     // MARK: Tab bar
     
     func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem!) {
-        println(item.tag);
+//        println(item.tag);
         
-        searchBar.resignFirstResponder()
-        searchBar.text = ""
-        searchActive = false
-        
-        loadData()
+        if item.tag != currentTab {
+            currentTab = item.tag
+            
+            searchBar.resignFirstResponder()
+            searchBar.text = ""
+            searchActive = false
+            
+            loadData()
+        }
     }
     
     // MARK: View button

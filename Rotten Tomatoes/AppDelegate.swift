@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.sharedApplication().statusBarStyle = .LightContent
         
 //        UISearchBar.appearance().searchBarStyle = UISearchBarStyle.Minimal
+        UISearchBar.appearance().tintColor = UIColor(red: 0/255, green: 79/255, blue: 0/255, alpha: 1.0)
         
         UITabBar.appearance().backgroundImage = UIImage()
         UITabBar.appearance().backgroundColor = UIColor(red: 0/255, green: 79/255, blue: 0/255, alpha: 1.0)
