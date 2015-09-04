@@ -24,10 +24,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBOutlet weak var errorView: UIView!
     
+    @IBOutlet weak var noResultsLabel: UILabel!
     
-    
-//    var movies: [NSDictionary]?
-//    var dvds: [NSDictionary]?
     var data: [NSDictionary]?
     
     var refreshControl: UIRefreshControl?
@@ -49,6 +47,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         super.viewDidLoad()
         
         collectionView.hidden = true
+        noResultsLabel.hidden = true
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -61,7 +60,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         loadData()
         
-        //Pull to refresh
+        // Pull to refresh
         pullToRefresh()
         
         
@@ -448,6 +447,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         searchActive = false
         self.tableView.reloadData()
         self.collectionView.reloadData()
+        showNoResultsLabel(false)
         searchBar.resignFirstResponder()
     }
     
@@ -464,16 +464,34 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             searchActive = false
             self.tableView.reloadData()
             self.collectionView.reloadData()
+            showNoResultsLabel(false)
         } else {
             searchActive = true
+            selectedIndexPath = nil
             filtered = data!.filter({ (movie) -> Bool in
                 let tmp: NSDictionary = movie
                 let range = tmp["title"]!.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)
                 return range.location != NSNotFound
             })
             
+            if filtered.count == 0 {
+                showNoResultsLabel(true)
+            } else {
+                showNoResultsLabel(false)
+            }
+            
             self.tableView.reloadData()
             self.collectionView.reloadData()
+        }
+    }
+    
+    func showNoResultsLabel(show: Bool) {
+        noResultsLabel.hidden = !show
+        let img = viewButton.image
+        if img == UIImage(named: "GridIcon") {
+            tableView.hidden = show
+        } else {
+            collectionView.hidden = show
         }
     }
     

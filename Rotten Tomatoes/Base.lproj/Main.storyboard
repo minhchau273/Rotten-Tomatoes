@@ -17,6 +17,13 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Results Found" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="yPK-0W-qJ4">
+                                <rect key="frame" x="97" y="150" width="144" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="98" sectionHeaderHeight="22" sectionFooterHeight="22" id="C6L-pC-9bN">
                                 <rect key="frame" x="0.0" y="117" width="320" height="402"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -105,7 +112,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="154" height="194"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Beh-2D-2se">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Beh-2D-2se">
                                                     <rect key="frame" x="8" y="0.0" width="138" height="152"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
@@ -197,6 +204,7 @@
                     <connections>
                         <outlet property="collectionView" destination="5Gp-FX-jed" id="fwb-zI-73S"/>
                         <outlet property="errorView" destination="lfE-Vd-HeC" id="n4c-M0-dcC"/>
+                        <outlet property="noResultsLabel" destination="yPK-0W-qJ4" id="eK2-Ow-E3h"/>
                         <outlet property="searchBar" destination="Tf1-Tf-iOa" id="qna-kp-NmQ"/>
                         <outlet property="tabBar" destination="KIt-H5-C0E" id="7g0-1r-5fk"/>
                         <outlet property="tableView" destination="C6L-pC-9bN" id="gEo-hn-fYj"/>
