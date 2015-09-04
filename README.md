@@ -2,7 +2,7 @@
 
 This is a movies app displaying box office and top rental DVDs using the Rotten Tomatoes API.
 
-Time spent: 13hrs
+Time spent: 15hrs
 
 ### Features
 
